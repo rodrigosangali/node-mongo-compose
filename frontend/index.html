@@ -27,22 +27,25 @@
                 <tbody id="clientsRows"></tbody>
             </table>
         </div>
-
         <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
 
         <script>
             const API = 'http://localhost:3000'
 
+            //aqui metodo que vai renderizar o botao
             const createButton = (label, type) => {
                 return $('<button>').addClass(`btn btn-${type}`).html(label)
             }
 
+            //metodo para renderizar as colunas da tabela
+            //recebe a lista de clientes e transforma em uma lista de componentes
             const renderRows = clients => {
+                //cada cliente vai gerar uma linha
                 const rows = clients.map(client => {
                     const updateButton = createButton('Atualizar', 'warning')
                     updateButton.click(() => loadClient(client))
-
-                    const removeButton = createButton('Excluir', 'danger')
+                    const removeButton = createButton( 'Excluir', 'danger')
+                    // associar o click do botao remove
                     removeButton.click(() => removeClient(client))
 
                     return $('<tr>')
@@ -50,47 +53,64 @@
                         .append($('<td>').append(updateButton).append(removeButton))
                 })
 
+                //obtem o rows que e o resultado do map ou conversao e coloca dentro de clientRows
+                // acima tem um tbody com id=clientsRows
                 $('#clientsRows').html(rows)
             }
-
+                       
             const loadClient = client => {
                 $('[name=id]').val(client._id)
                 $('[name=name]').val(client.name)
             }
-
+            
+            // recebe como paremtro um cliente e faz uma chamada ajax
             const removeClient = client => {
-                $.ajax({
-                    method: 'DELETE',
-                    url: `${API}/clients/${client._id}`,
-                    success: getClients
-                })
-            }
+                // chama na api o metodo delete
+                $.ajax({                            
+                method: 'DELETE',
+                url: `${API}/clients/${client._id}`,
+                success: getClients
 
+                })
+  
+            }  
+                     
+            //Criacao do metodo. que faz uma chamada ajax
             const getClients = () => {
                 $.ajax({
                     url: `${API}/clients`,
-                    success: clients => {
-                        renderRows(clients)
-                        $('[name]').val('')
+                    // Aqui é o metodo de sucesso
+                    success: clients =>{
+                            renderRows(clients)
+                            //limpa o nome sempre que fizer uma atualizacao
+                            $('[name]').val('')
+
                     }
-                })
+                })            
             }
 
             const saveClient = () => {
                 const _id = $('[name=id]').val()
                 const name = $('[name=name]').val()
+                //aqui é uma chamada ajax
                 $.ajax({
+                    //fzendo teste no metodo, usando ternario
                     method: _id ? 'PUT' : 'POST',
                     url: `${API}/clients/${_id}`,
-                    data: _id ? { _id, name } : { name },
+                    data: _id ? { _id, name} : { name },
+                    // retornando sucesso, obtem a lista de clientes
                     success: getClients
+
                 })
             }
 
+            // Quando a pagina for carregada vai chamar o metodo    
             $(() => {
                 getClients()
+                // aqui faz associacao do botao save com o metodo
                 $('[save]').click(saveClient)
             })
+        
         </script>
     </body>
-</html>
+</html> 
