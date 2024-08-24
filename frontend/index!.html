@@ -44,7 +44,6 @@
                 const rows = clients.map(client => {
                     const updateButton = createButton('Atualizar', 'warning')
                     updateButton.click(() => loadClient(client))
-                    
                     const removeButton = createButton( 'Excluir', 'danger')
                     // associar o click do botao remove
                     removeButton.click(() => removeClient(client))
@@ -67,10 +66,13 @@
             // recebe como paremtro um cliente e faz uma chamada ajax
             const removeClient = client => {
                 // chama na api o metodo delete
-                method: 'DELETE'
-                url: `${API}/clients/${client._id}`
+                $.ajax({                            
+                method: 'DELETE',
+                url: `${API}/clients/${client._id}`,
                 success: getClients
 
+                })
+  
             }  
                      
             //Criacao do metodo. que faz uma chamada ajax
